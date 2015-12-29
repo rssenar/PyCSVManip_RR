@@ -1,22 +1,6 @@
-
-'''
-0 = NAME
-1 = ADDRESS
-2 = CITY
-3 = STATE
-4 = ZIP
-5 = RES_PHONE#
-6 = EMAIL_ADDRESS
-7 = VIN
-8 = YEAR
-9 = MAKE
-10 = MODEL
-11 = DEL_DATE
-12 = RO_DATE
-'''
 import csv
 # ---------------------------------------------
-CSVFilesHaveHeaderRow = True # True or False if input files include a header row
+CSVFilesHaveHeaderRow = True
 InitalPrevLineStatus = True
 # ---------------------------------------------
 NAME = 0
@@ -24,6 +8,14 @@ ADDRESS = 1
 CITY = 2
 STATE = 3
 ZIP = 4
+RES_PHONE = 5
+EMAIL_ADDRESS = 6
+VIN = 7
+YEAR = 8
+MAKE = 9
+MODEL = 10
+DEL_DATE = 11
+RO_DATE = 12
 
 HeaderRow = [\
 	'NAME',\
@@ -41,7 +33,8 @@ HeaderRow = [\
 	'RO_DATE'\
 	]
 # ---------------------------------------------
-InputFile = "/Users/rssenar/Desktop/BillLukeSalesService.csv"
+InputFileName = input("Enter Suppression File Name : ")
+InputFile = "/Users/rssenar/Desktop/" + InputFileName + ".csv"
 CleanOutput = "/Users/rssenar/Desktop/__CleanOutputMAIN.csv"
 # ---------------------------------------------
 InputFile = open(InputFile,'r')
@@ -53,25 +46,45 @@ OutputClean = csv.writer(CleanOutput)
 OutputClean.writerow(HeaderRow)
 # ---------------------------------------------
 FirstLine = True
-PrevLineStatus = True
+IsFirstRow = True
+Condition = True
+Counter = 0
 
 for line in Input:
 	if CSVFilesHaveHeaderRow and FirstLine:
 		FirstLine = False
-	elif (line[NAME] != '' and line[ADDRESS] != '' and line[CITY] != '' and line[STATE] != '' and line[ZIP] != '') and (InitalPrevLineStatus and PrevLineStatus):
+		Counter += 1
+		print(Counter)
+	elif IsFirstRow == True:
 		Prevline = line
-		PrevLineStatus = False
-	
-	elif line[NAME] != '' and line[ADDRESS] != '' and line[CITY] != '' and line[STATE] != '' and line[ZIP] != '':
+		IsFirstRow = False
+		Counter += 1
+		print(Counter)
+	elif line[VIN] != '' and  Condition == True:
 		OutputClean.writerow(Prevline)
 		Prevline = line
-		
-	elif line[NAME] == '' and line[ADDRESS] != '' and line[CITY] == '' and line[STATE] == '' and line[ZIP] == '':
+		Counter += 1
+		print(Counter)
+	elif Condition == True:
+		Prevline[NAME] = Prevline[NAME] + line[NAME]
 		Prevline[ADDRESS] = Prevline[ADDRESS] + line[ADDRESS]
+		Prevline[CITY] = Prevline[CITY] + line[CITY]
+		Prevline[STATE] = Prevline[STATE] + line[STATE]
+		Prevline[ZIP] = Prevline[ZIP] + line[ZIP]
+		Prevline[RES_PHONE] = Prevline[RES_PHONE] + line[RES_PHONE]
+		Prevline[EMAIL_ADDRESS] = Prevline[EMAIL_ADDRESS] + line[EMAIL_ADDRESS]
+		Prevline[YEAR] = Prevline[YEAR] + line[YEAR]
+		Prevline[MAKE] = Prevline[MAKE] + line[MAKE]
+		Prevline[MODEL] = Prevline[MODEL] + line[MODEL]
 		OutputClean.writerow(Prevline)
-		
+		Condition = False
+		Counter += 1
+		print(Counter)
 	else:
-		pass
+		Prevline = line
+		Condition = True
+		Counter += 1
+		print(Counter)
 # ---------------------------------------------
 InputFile.close()
 CleanOutput.close()

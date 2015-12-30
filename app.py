@@ -1,4 +1,5 @@
 import csv
+from tqdm import tqdm
 # ---------------------------------------------
 CSVFilesHaveHeaderRow = True
 InitalPrevLineStatus = True
@@ -35,6 +36,8 @@ HeaderRow = [\
 # ---------------------------------------------
 InputFileName = input("Enter Suppression File Name : ")
 InputFile = "/Users/rssenar/Desktop/" + InputFileName + ".csv"
+TotalRows = input("Enter Total Rows : ")
+
 CleanOutput = "/Users/rssenar/Desktop/__CleanOutputMAIN.csv"
 # ---------------------------------------------
 InputFile = open(InputFile,'r')
@@ -45,46 +48,40 @@ OutputClean = csv.writer(CleanOutput)
 # ---------------------------------------------
 OutputClean.writerow(HeaderRow)
 # ---------------------------------------------
+CountDown = int(TotalRows)
+
 FirstLine = True
 IsFirstRow = True
 Condition = True
-Counter = 0
 
-for line in Input:
-	if CSVFilesHaveHeaderRow and FirstLine:
-		FirstLine = False
-		Counter += 1
-		print(Counter)
-	elif IsFirstRow == True:
-		Prevline = line
-		IsFirstRow = False
-		Counter += 1
-		print(Counter)
-	elif line[VIN] != '' and  Condition == True:
-		OutputClean.writerow(Prevline)
-		Prevline = line
-		Counter += 1
-		print(Counter)
-	elif Condition == True:
-		Prevline[NAME] = Prevline[NAME] + line[NAME]
-		Prevline[ADDRESS] = Prevline[ADDRESS] + line[ADDRESS]
-		Prevline[CITY] = Prevline[CITY] + line[CITY]
-		Prevline[STATE] = Prevline[STATE] + line[STATE]
-		Prevline[ZIP] = Prevline[ZIP] + line[ZIP]
-		Prevline[RES_PHONE] = Prevline[RES_PHONE] + line[RES_PHONE]
-		Prevline[EMAIL_ADDRESS] = Prevline[EMAIL_ADDRESS] + line[EMAIL_ADDRESS]
-		Prevline[YEAR] = Prevline[YEAR] + line[YEAR]
-		Prevline[MAKE] = Prevline[MAKE] + line[MAKE]
-		Prevline[MODEL] = Prevline[MODEL] + line[MODEL]
-		OutputClean.writerow(Prevline)
-		Condition = False
-		Counter += 1
-		print(Counter)
-	else:
-		Prevline = line
-		Condition = True
-		Counter += 1
-		print(Counter)
+while CountDown != 0:
+	for line in tqdm(Input):
+		if CSVFilesHaveHeaderRow and FirstLine:
+			FirstLine = False
+		elif IsFirstRow == True:
+			Prevline = line
+			IsFirstRow = False
+		elif line[VIN] != '' and  Condition == True:
+			OutputClean.writerow(Prevline)
+			Prevline = line
+		elif Condition == True:
+			Prevline[NAME] = Prevline[NAME] + line[NAME]
+			Prevline[ADDRESS] = Prevline[ADDRESS] + line[ADDRESS]
+			Prevline[CITY] = Prevline[CITY] + line[CITY]
+			Prevline[STATE] = Prevline[STATE] + line[STATE]
+			Prevline[ZIP] = Prevline[ZIP] + line[ZIP]
+			Prevline[RES_PHONE] = Prevline[RES_PHONE] + line[RES_PHONE]
+			Prevline[EMAIL_ADDRESS] = Prevline[EMAIL_ADDRESS] + line[EMAIL_ADDRESS]
+			Prevline[YEAR] = Prevline[YEAR] + line[YEAR]
+			Prevline[MAKE] = Prevline[MAKE] + line[MAKE]
+			Prevline[MODEL] = Prevline[MODEL] + line[MODEL]
+			OutputClean.writerow(Prevline)
+			Condition = False
+		else:
+			Prevline = line
+			Condition = True
+		CountDown-=1
+OutputClean.writerow(line)
 # ---------------------------------------------
 InputFile.close()
 CleanOutput.close()
